@@ -68,6 +68,7 @@ class Crawler:
                     """
                     Error handling
                     """
+                    if data == None: continue
                     error_code = self.error_check(data)
                     if error_code == 130:
                         logging.info('Over capasity: sleep 1 minute')
