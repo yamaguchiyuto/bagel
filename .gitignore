@@ -2,4 +2,6 @@ data/
 log/
 lib/util.pyc
 lib/db.pyc
+lib/geocoder.pyc
 lib/__init__.py
+lib/__init__.pyc
