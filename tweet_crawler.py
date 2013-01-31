@@ -33,18 +33,6 @@ class Crawler:
                     min_id = tweet['id']
             return [max_id, min_id]
 
-        def error_occurs(self, data):
-            if data == None:
-                logging.warning("None returned from API")
-                return True
-            if 'errors' in data:
-                logging.warning(data['errors'])
-                return True
-            if not 'results' in data:
-                logging.warning(data)
-                return True
-            return False
-	
 	def get(self, params):
 		try:
 			f = urllib.urlopen(self.url + '?' + urllib.urlencode(params))
@@ -58,6 +46,14 @@ class Crawler:
 			logging.warning('parse error')
                         return None
 
+        def error_check(self, data):
+            if 'errors' in data:
+                return data['errors'][0]['code']
+            elif 'error' in data:
+                return -1
+            else:
+                return None
+
 	def run(self, min_id=0):
             logging.info("query: %s", self.query)
             params = {'q': self.query, 'result_type': 'recent', 'rpp': self.rpp, 'include_entities': 'true', 'since_id': min_id}
@@ -68,8 +64,19 @@ class Crawler:
                 while 1:
                     params['page'] = p
                     data = self.get(params)
-                    if self.error_occurs(data):
+
+                    """
+                    Error handling
+                    """
+                    error_code = self.error_check(data)
+                    if error_code == 130:
+                        logging.info('Over capasity: sleep 1 minute')
+                        time.sleep(60)
                         continue
+                    elif error_code != None:
+                        logging.info(data['errors'])
+                        exit()
+
                     self.output(data)
                     max_id, min_id = self.get_max_and_min_id(data, max_id, min_id)
 
