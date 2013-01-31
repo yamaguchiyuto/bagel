@@ -1,5 +1,7 @@
 data/
 log/
+clusters/
+events/
 lib/util.pyc
 lib/db.pyc
 lib/geocoder.pyc
