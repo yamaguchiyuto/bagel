@@ -1,5 +1,6 @@
 import sys
 import logging
+import time
 
 from lib.geocoder import Geocoder
 from lib.db import DB
@@ -19,11 +20,13 @@ while True:
         if user['location_property'] == '':
             db.update_user_by_geocoded_info(user['id'], -1)
             logging.info("Cannot geocoded %s", user['id'])
+            time.sleep(10)
             continue
         locations = geocoder.get(user['location_property'])
         if len(locations) == 0:
             db.update_user_by_geocoded_info(user['id'], -1)
             logging.info("Cannot geocoded %s", user['id'])
+            time.sleep(10)
             continue
         location = locations.pop(0)
         location['id'] = location['id'].split('.')[0]
