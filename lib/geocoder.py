@@ -5,11 +5,11 @@ import socket
 import json
 
 class Geocoder:
-	def __init__(self, logging, output='json', api_key='lUejr_6xg67W1d.1YWi3fowrHUqoWjGOxlsk4WiuGMiyuH9XvjUSq1IeajGGQhIT', timeout=2):
+	def __init__(self, logging, conf_file, output='json', timeout=2):
                 self.logging = logging
 		self.url = 'http://geo.search.olp.yahooapis.jp/OpenLocalPlatform/V1/geoCoder'
 		self.output = output
-		self.api_key = api_key
+		self.api_key = open(conf_file, 'r').readline().rstrip()
 		socket.setdefaulttimeout(timeout)
 
 	def _get(self, query):
@@ -39,11 +39,3 @@ class Geocoder:
 			long, lat = result['Geometry']['Coordinates'].split(',')
 			locations.append({'name':result['Name'], 'lat':lat, 'long':long, 'id': result['Id']})
 		return locations
-		
-
-if __name__ == '__main__':
-	geocoder = Geocoder()
-	results = geocoder.get('さいたま')
-	for r in results:
-		print r['name']
-		print r['lat'], r['long']

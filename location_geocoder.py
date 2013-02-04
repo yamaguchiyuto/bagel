@@ -11,7 +11,8 @@ logging.basicConfig(level=logging.DEBUG,
     filename='./log/location_geocoder.log',
     filemode='w')
 
-geocoder = Geocoder(logging)
+conf_file = 'data/geocoder.conf'
+geocoder = Geocoder(logging, conf_file)
 db = DB(logging)
 
 while True:
