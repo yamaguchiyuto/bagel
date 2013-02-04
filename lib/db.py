@@ -67,7 +67,7 @@ class DB:
         user_id = tweet['from_user_id_str']
         timestamp = util.mysqldatetimeformat(tweet['created_at'])
         q = util.mysqlescape(q).decode('UTF-8')
-        query = "INSERT INTO tweets VALUES(%s, '%s', %s, '%s', '%s')" % (id, text, user_id, timestamp, q)
+        query = "INSERT INTO tweets(id, text, user_id, timestamp, query) VALUES(%s, '%s', %s, '%s', '%s')" % (id, text, user_id, timestamp, q)
         self.issue_insert(query.encode('utf8'))
 
     def insert_post_user(self, tweet):
@@ -158,16 +158,6 @@ class DB:
         result = self.issue_select(query)
         return result
 
-    def set_graph_crawled(self, uid, v):
-        query = "UPDATE users SET graph_crawled = %s WHERE id = %s" % (v, uid)
-        self.issue_insert(query)
-    def set_profile_crawled(self, uid, v):
-        query = "UPDATE users SET profile_crawled = %s WHERE id = %s" % (v, uid)
-        self.issue_insert(query)
-    def set_tweets_crawled(self, uid, v):
-        query = "UPDATE users SET tweets_crawled = %s WHERE id = %s" % (v, uid)
-        self.issue_insert(query)
-
     def set_processed(self, tid, v):
-        query = "UPDATE twees SET processed = %s WHERE id = %s" % (v, tid)
+        query = "UPDATE tweets SET processed = %s WHERE id = %s" % (v, tid)
         self.issue_insert(query)

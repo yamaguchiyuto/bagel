@@ -73,6 +73,8 @@ class ContentClustering:
                 location = [location[0]['latitude'], location[0]['longitude']]
             buf[tid] = (t['user_id'], text, location, words)
 
+            self.db.set_processed(tid, 1)
+
             if p_time + self.window_size < timestamp:
                 """
                 clustering
