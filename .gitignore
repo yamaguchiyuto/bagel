@@ -6,6 +6,6 @@ lib/util.pyc
 lib/db.pyc
 lib/geocoder.pyc
 lib/dbscan.pyc
-lib.grid.pyc
+lib/grid.pyc
 lib/__init__.py
 lib/__init__.pyc
