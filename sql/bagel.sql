@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 5.1.62, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: lied
+-- Host: localhost    Database: bagel
 -- ------------------------------------------------------
 -- Server version	5.1.62-0ubuntu0.10.04.1
 
@@ -32,20 +32,6 @@ CREATE TABLE `locations` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `social_graph`
---
-
-DROP TABLE IF EXISTS `social_graph`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `social_graph` (
-  `src_id` bigint(20) NOT NULL DEFAULT '0',
-  `dst_id` bigint(20) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`src_id`,`dst_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `tweets`
 --
 
@@ -58,6 +44,7 @@ CREATE TABLE `tweets` (
   `user_id` bigint(20) DEFAULT NULL,
   `timestamp` datetime DEFAULT NULL,
   `query` varchar(50) DEFAULT NULL,
+  `processed` int(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id_index` (`user_id`),
   KEY `query_index` (`query`)
@@ -97,4 +84,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-02-01  0:48:07
+-- Dump completed on 2013-02-05  0:49:04
