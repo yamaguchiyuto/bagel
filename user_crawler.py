@@ -29,6 +29,9 @@ class Crawler:
                 # code 34 = All users in DB are collected except not existing users.
                 logging.warning(data['errors'])
                 return True
+            elif 'error' in data:
+                logging.warning(data['error'])
+                return True
             return False
 	
 	def post(self, params):
