@@ -117,6 +117,10 @@ class DB:
         result = self.issue_select(query)
         return result
 
+    def set_profile_crawled(self, uid, v):
+        query = "UPDATE users SET profile_crawled = %s WHERE id = %s" % (v, uid)
+        self.issue_insert(query)
+
     def set_processed(self, tid, v):
         query = "UPDATE tweets SET processed = %s WHERE id = %s" % (v, tid)
         self.issue_insert(query)
