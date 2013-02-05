@@ -67,7 +67,7 @@ if __name__ == '__main__':
         print "[USAGE]: python %s [dispersion threshold]" % sys.argv[0]
         exit()
 
-    dispersion_threshold = float(sys.argv[1])
+    maxdispersion = float(sys.argv[1])
 
-    sp = SpatialAnalysis(dispersion_threshold)
+    sp = SpatialAnalysis(maxdispersion)
     sp.run()
