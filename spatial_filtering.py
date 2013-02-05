@@ -5,9 +5,11 @@ import sys
 import lib.util as util
 
 class SpatialAnalysis:
-    def __init__(self, cluster_file, maxdispersion):
-        self.cluster_file = cluster_file
+    def __init__(self, maxdispersion):
         self.maxdispersion = maxdispersion 
+
+    def receive_cluster(self):
+        return json.loads(sys.stdin.readline())
 
     def calc_medoid(self, points):
         centroid = self.calc_centroid(points)
@@ -46,8 +48,8 @@ class SpatialAnalysis:
 
     def run(self):
         detected_count = 0
-        for line in open(self.cluster_file, 'r'):
-            cluster = json.loads(line.rstrip())
+        while True:
+            cluster = self.receive_cluster()
             points = [tweet['location'] for tweet in cluster['tweets'] if tweet['location'] != None]
             if len(points) < 2:
                 continue
@@ -61,12 +63,11 @@ class SpatialAnalysis:
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print "[USAGE]: python %s [cluster data] [dispersion threshold]" % sys.argv[0]
+    if len(sys.argv) < 2:
+        print "[USAGE]: python %s [dispersion threshold]" % sys.argv[0]
         exit()
 
-    cluster_file = sys.argv[1]
-    dispersion_threshold = float(sys.argv[2])
+    dispersion_threshold = float(sys.argv[1])
 
-    sp = SpatialAnalysis(cluster_file, dispersion_threshold)
+    sp = SpatialAnalysis(dispersion_threshold)
     sp.run()
