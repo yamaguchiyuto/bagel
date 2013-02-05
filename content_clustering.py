@@ -31,7 +31,7 @@ class ContentClustering:
             for k in self.cluster_params:
                 output[k] = self.cluster_params[k]
             for tweet_id in c:
-                output['tweets'].append({'id': tweet_id, 'words': buf[tweet_id][3], 'text': buf[tweet_id][1], 'location': buf[tweet_id][2], 'user_id': buf[tweet_id][0]})
+                output['tweets'].append({'id': tweet_id, 'words': buf[tweet_id][3], 'text': buf[tweet_id][1], 'location': buf[tweet_id][2], 'location_id': buf[tweet_id][4], 'user_id': buf[tweet_id][0]})
             print json.dumps(output)
          
 
@@ -65,9 +65,11 @@ class ContentClustering:
 
             if len(location) == 0:
                 location = None
+                location_id = None
             else:
+                location_id = location[0]['id']
                 location = [location[0]['latitude'], location[0]['longitude']]
-            buf[tid] = (t['user_id'], text, location, words)
+            buf[tid] = (t['user_id'], text, location, words, location_id)
 
             self.db.set_processed(tid, 1)
 

@@ -5,8 +5,9 @@ import sys
 import lib.util as util
 
 class SpatialAnalysis:
-    def __init__(self, maxdispersion):
+    def __init__(self, maxdispersion, db):
         self.maxdispersion = maxdispersion 
+        self.db = db
 
     def receive_cluster(self):
         return json.loads(sys.stdin.readline())
@@ -46,6 +47,12 @@ class SpatialAnalysis:
                     }
         print json.dumps(output)
 
+    def insert(self, count, cluster):
+        self.db.insert_event(count, cluster)
+
+    def update_location_distribution(self, cluster):
+        pass
+
     def run(self):
         detected_count = 0
         while True:
@@ -60,6 +67,8 @@ class SpatialAnalysis:
             if dispersion < self.maxdispersion:
                 detected_count += 1
                 self.output(detected_count, cluster)
+                self.insert_event(detected_count, cluster)
+                self.update_location_distribution(cluster)
 
 
 if __name__ == '__main__':
@@ -67,7 +76,11 @@ if __name__ == '__main__':
         print "[USAGE]: python %s [dispersion threshold]" % sys.argv[0]
         exit()
 
+
     maxdispersion = float(sys.argv[1])
 
-    sp = SpatialAnalysis(maxdispersion)
+    from lib.db import DB
+    db = DB()
+
+    sp = SpatialAnalysis(maxdispersion, db)
     sp.run()
