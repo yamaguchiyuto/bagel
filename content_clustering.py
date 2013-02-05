@@ -26,17 +26,13 @@ class ContentClustering:
         return words
 
     def output(self, start_time, end_time, clusters, buf):
-        output = {'start': start_time, 'end': end_time, 'window_size': self.window_size, 'clusters':[]}
-        for k in self.cluster_params:
-            output[k] = self.cluster_params[k]
-        
         for c in clusters:
-            cluster = []
+            output = {'start': start_time, 'end': end_time, 'windowsize': self.window_size, 'tweets':[]}
+            for k in self.cluster_params:
+                output[k] = self.cluster_params[k]
             for tweet_id in c:
-                cluster.append({'id': tweet_id, 'words': buf[tweet_id][3], 'text': buf[tweet_id][1], 'location': buf[tweet_id][2], 'user_id': buf[tweet_id][0]})
-            output['clusters'].append(cluster)
-
-        print json.dumps(output)
+                output['tweets'].append({'id': tweet_id, 'words': buf[tweet_id][3], 'text': buf[tweet_id][1], 'location': buf[tweet_id][2], 'user_id': buf[tweet_id][0]})
+            print json.dumps(output)
          
 
     def get_tweets(self, query):

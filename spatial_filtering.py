@@ -5,9 +5,9 @@ import sys
 import lib.util as util
 
 class SpatialAnalysis:
-    def __init__(self, file, dispersion_threshold):
-        self.file = file
-        self.dth = dispersion_threshold
+    def __init__(self, cluster_file, maxdispersion):
+        self.cluster_file = cluster_file
+        self.maxdispersion = maxdispersion 
 
     def calc_medoid(self, points):
         centroid = self.calc_centroid(points)
@@ -31,22 +31,34 @@ class SpatialAnalysis:
         n = float(len(points))
         return sum_dist/n
 
-    def output(self, count, tweets, start_time, end_time, minpts, eps, detected):
-        output_value = {'id': count, 'tweets':tweets, 'start':start_time, 'end':end_time, 'minpts':minpts, 'eps':eps, 'detected':detected}
-        print json.dumps(output_value)
+    def output(self, count, cluster):
+        output = {
+                    'id': count,
+                    'tweets':cluster['tweets'],
+                    'start': cluster['start'],
+                    'end': cluster['end'],
+                    'minpts': cluster['minpts'],
+                    'eps': cluster['eps'],
+                    'maxdispersion': self.maxdispersion,
+                    'windowsize': cluster['windowsize']
+                    }
+        print json.dumps(output)
 
     def run(self):
-        for line in open(self.file, 'r'):
-            bursts = json.loads(line.rstrip())
-            for burst in bursts['bursts']:
-                points = [tweet['location'] for tweet in burst if tweet['location'] != None]
-                if len(points) < 2:
-                    continue
-                medoid = self.calc_medoid(points)
-                dispersion = self.calc_dispersion(medoid, points)
-                if dispersion < self.dth:
-                    detected.append({'prob':p, 'dispersion':dispersion, 'center':centroid})
-                    self.output(count, burst, bursts['start'], bursts['end'], bursts['minpts'], bursts['eps'])
+        detected_count = 0
+        for line in open(self.cluster_file, 'r'):
+            cluster = json.loads(line.rstrip())
+            points = [tweet['location'] for tweet in cluster['tweets'] if tweet['location'] != None]
+            if len(points) < 2:
+                continue
+
+            medoid = self.calc_medoid(points)
+            dispersion = self.calc_dispersion(medoid, points)
+
+            if dispersion < self.maxdispersion:
+                detected_count += 1
+                self.output(detected_count, cluster)
+
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
