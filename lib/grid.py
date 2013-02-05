@@ -1,57 +1,72 @@
 # -*- coding: utf-8 -*-
 
 class Grid:
-    # box: 対象とする範囲を軽度の上限下限、緯度の左限右限で指定する (e.g. [35.0, 45.0, 135.0, 145.0])
-    # div: 対象範囲を何分割するかを指定する (e.g. 10)
-    # セル番号の順番:
-    #                   1 2 3
-    #                   4 5 6
-    #                   7 8 9 
+    """
+    box: Specify target region by upper, lower, right-most, left-most point (e.g. [35.0, 45.0, 135.0, 145.0])
+    div: Specify the number of division
+    The order of cell number in the box:
+                      1 2 3
+                      4 5 6
+                      7 8 9 
+    """
+
     def __init__(self, box=[30.0, 45.0, 130.0, 145.0], div=100):
         self.box = box
         self.div = div
-        self.dlat = (self.box[1] - self.box[0]) / float(self.div)
-        self.dlong = (self.box[3] - self.box[2]) / float(self.div)
+        self.dlat = (self.box[1] - self.box[0]) / float(self.div) # dlat denotes the width of a cell
+        self.dlongi = (self.box[3] - self.box[2]) / float(self.div) # dlongi denotes the height of a cell
 
-    # 与えられた緯度経度からセル番号を返す
     def get_cell(self, point):
+        """
+        Returns cell number corresponding to the input (latitude, longitude) tuple
+        """
+
         lat = point[0]
-        long = point[1]
+        longi = point[1]
     
-        _lat = self.box[0]
+        _lat = self.box[0] # start from the leftmost point
         i = 0
-        while self.box[1] > _lat: # 緯度がboxの端に到達するまで
-            if _lat <= lat <= (_lat + self.dlat):
-                break
-            else:
-                _lat += self.dlat
-                i += 1
+        while self.box[1] > _lat:
+            if _lat <= lat <= (_lat + self.dlat): break
 
-        _long = self.box[2]
+            _lat += self.dlat
+            i += 1
+        else:
+            return None # not found
+
+        _longi = self.box[2] # start from the upmost point
         j = 0
-        while self.box[3] > _long:
-            if _long <= long <= (_long + self.dlong):
-                break
-            else:
-                _long += self.dlong
-                j += 1
+        while self.box[3] > _longi:
+            if _longi <= longi <= (_longi + self.dlongi): break
 
-        if i >= self.div or j >= self.div:
-            return None
+            _longi += self.dlongi
+            j += 1
+        else:
+            return None # not found
 
         return (j*self.div) + i
 
-    # 与えられたセル番号から代表点の緯度経度を返す
     def get_point(self, n):
+        """
+        Returns (latitude, longitude) tuple correnponding to the input cell number
+        """
+
         if n >= self.div**2:
             return None
 
-        i = n%self.div
-        j = n/self.div
-        lat = self.box[0] + (self.dlat * (i+0.5))
-        long = self.box[2] + (self.dlong * (j+0.5))
+        i = n % self.div # column number
+        j = n / self.div # row number
 
-        return [lat, long]
+        leftmost = self.box[0]
+        upmost = self.box[2]
+
+        width_offset = self.dlat * (i + 0.5) # 0.5 guarantees that the point to be returned is the center of the cell
+        height_offset = self.dlongi * (j + 0.5)
+
+        lat = leftmost + width_offset
+        longi = upmost + height_offset
+
+        return [lat, longi]
 
 if __name__ == '__main__':
     grid = Grid([30.0, 45.0, 130.0, 145.0], 3)
