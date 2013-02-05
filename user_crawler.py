@@ -17,9 +17,14 @@ class Crawler:
                 self.url = "https://api.twitter.com/1/users/lookup.json"
 		socket.setdefaulttimeout(10)
 
-        def output(self, data):
+        def output(self, data, uids):
+            crawled = set([])
             for user in data:
                 self.db.update_user_by_crawled_info(user)
+                crawled.add(user['id_str'])
+            for uid in uids:
+                if not uid in crawled:
+                    self.db.set_profile_crawled(uid, 2)
 
         def error_occurs(self, data):
             if data == None:
@@ -53,10 +58,10 @@ class Crawler:
             data = self.post(params)
             if self.error_occurs(data):
                 for uid in uids:
-                    db.set_profile_crawled(uid, 2)
+                    self.db.set_profile_crawled(uid, 2)
                 return
 
-            self.output(data)
+            self.output(data, uids)
 
             crawled_user_count = len(data)
             logging.info("Got %d users", crawled_user_count)
