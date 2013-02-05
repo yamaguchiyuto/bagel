@@ -120,3 +120,8 @@ class DB:
     def set_processed(self, tid, v):
         query = "UPDATE tweets SET processed = %s WHERE id = %s" % (v, tid)
         self.issue_insert(query)
+
+
+    def insert_event(self, event):
+        query = "INSERT INTO events(start_timestamp, end_timestamp, latitude, longitude, dispersion) VALUES ('%s', '%s', %s, %s, %s)" % ()
+        self.issue_insert(query)
