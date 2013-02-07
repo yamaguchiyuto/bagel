@@ -30,13 +30,13 @@ class DB:
             self.logging.warning(e)
 
     def get_tweet(self, tid):
-        query = "SELECT * FROM tweets WHERE id = %s" % tid
+        query = "SELECT * FROM tweets WHERE id = %s AND processed != 1" % tid
         return self.issue_select(query)
     def get_tweets(self, n=None):
         if n == None:
-            query = "SELECT * FROM tweets WHERE query != '' ORDER BY id"
+            query = "SELECT * FROM tweets WHERE query != '' AND processed != 1 ORDER BY id"
         else:
-            query = "SELECT * FROM tweets WHERE query != '' ORDER BY id LIMIT %s" % n
+            query = "SELECT * FROM tweets WHERE query != '' AND processed != 1 ORDER BY id LIMIT %s" % n
         return self.issue_select(query)
     
     def get_tweets_with_user(self, uid, n):
