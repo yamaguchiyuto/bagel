@@ -1,4 +1,4 @@
-REQUIRED CONFIGURE FILES:
+--- REQUIRED CONFIGURE FILES:
 	data/db.conf
 	data/geocoder.conf
 	data/stopwords
@@ -19,17 +19,19 @@ stopword3
 stopword4
 ...
 
+-----------------------------
 
 
-HOW TO START:
+--- HOW TO START:
 	mysql -u [username] -p [dbname] < dump/bagel.sql	# Restore tables without data
 	python tweet_crawler.py 'QUERY1 OR QUERY2'		# Start tweet crawler; specify query keywords
 	python user_crawler.py 					# Start user crawler
 	python location_geocoer.py				# Start location geocoder; this requires data/geocoder.conf
 	python content_clustering.py [windowsize in seconds] [minpts] [eps] '[query]' | python spatial_filtering.py [maxdispersion] > output_file.json
+-----------------
 
 
-Tables in Bagel DB:
+--- Tables in Bagel DB:
 	tweets
 		crawled tweets
 	users
@@ -42,11 +44,11 @@ Tables in Bagel DB:
 		inferred location distribution
 	event_tweets
 		tweets assignments to events
+-----------------------
 
 
 
-Cluster output format:
-
+--- Cluster output format:
 {
 	'start': 10000000.0,
 	'end': 10000010.0,
@@ -73,8 +75,9 @@ Cluster output format:
 		  ]
 	
 }
+--------------------------
 
-Event output format:
+--- Event output format:
 {
 	'id': 1,
 	'start': 1000000.0,
@@ -103,3 +106,4 @@ Event output format:
 		}
 	  ]
 }
+-----------------------
