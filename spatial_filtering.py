@@ -34,7 +34,7 @@ class SpatialAnalysis:
         n = float(len(points))
         return sum_dist/n
 
-    def output(self, count, cluster):
+    def output(self, count, cluster, dispersion, medoid):
         output = {
                     'id': count,
                     'tweets':cluster['tweets'],
@@ -43,15 +43,27 @@ class SpatialAnalysis:
                     'minpts': cluster['minpts'],
                     'eps': cluster['eps'],
                     'maxdispersion': self.maxdispersion,
+                    'dispersion': dispersion,
+                    'center': medoid,
                     'windowsize': cluster['windowsize']
                     }
         print json.dumps(output)
 
-    def insert(self, count, cluster):
-        self.db.insert_event(count, cluster)
+    def insert_event(self, cluster, dispersion, medoid):
+        self.db.insert_event(cluster, medoid, dispersion)
 
     def update_location_distribution(self, cluster):
-        pass
+        users = set([])
+        locations = {}
+        for tweet in cluster['tweets']:
+            user_id = tweet['user_id']
+            users.add(user_id)
+            location = tweet['location_id']
+            if location != None:
+                if not location in locations:
+                    locations[location] = 0
+                locations[location] += 1
+        self.db.update_location_distribution(users, locations)
 
     def run(self):
         detected_count = 0
@@ -66,8 +78,8 @@ class SpatialAnalysis:
 
             if dispersion < self.maxdispersion:
                 detected_count += 1
-                self.output(detected_count, cluster)
-                self.insert_event(detected_count, cluster)
+                self.output(detected_count, cluster, dispersion, medoid)
+                self.insert_event(cluster, dispersion, medoid)
                 self.update_location_distribution(cluster)
 
 
@@ -80,7 +92,8 @@ if __name__ == '__main__':
     maxdispersion = float(sys.argv[1])
 
     from lib.db import DB
-    db = DB()
+    import logging
+    db = DB(logging)
 
     sp = SpatialAnalysis(maxdispersion, db)
     sp.run()

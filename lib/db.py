@@ -13,10 +13,12 @@ class DB:
         self.issue_insert('set names utf8')
         self.logging = logging
 
-    # 何もマッチしなければ長さ0のリストを返す
     def issue_insert(self, query):
+        """
+        Returns the number of affected rows
+        """
         try:
-            self.cursor.execute(query)
+            return self.cursor.execute(query)
         except Exception, e:
             self.logging.warning(query)
             self.logging.warning(e)
@@ -126,6 +128,27 @@ class DB:
         self.issue_insert(query)
 
 
-    def insert_event(self, event):
-        query = "INSERT INTO events(start_timestamp, end_timestamp, latitude, longitude, dispersion) VALUES ('%s', '%s', %s, %s, %s)" % ()
+    def insert_event(self, event, center, dispersion):
+        start_timestamp = util.decode_mysql_datetime_format_from_unixtime(event['start'])
+        end_timestamp = util.decode_mysql_datetime_format_from_unixtime(event['end'])
+        latitude = center[0]
+        longitude = center[1]
+        query = "INSERT INTO events(start_timestamp, end_timestamp, latitude, longitude, dispersion) VALUES ('%s', '%s', %s, %s, %s)" % (start_timestamp, end_timestamp, latitude, longitude, dispersion)
         self.issue_insert(query)
+        last_id = self.issue_select("select last_insert_id()")[0]['last_insert_id()']
+        for tweet in event['tweets']:
+            tweet_id = tweet['id']
+            query = "INSERT INTO event_tweets values (%s, %s)" % (tweet_id, last_id)
+            self.issue_insert(query)
+        
+
+    def update_location_distribution(self, user_ids, location_counts):
+        for user_id in user_ids:
+            for location_id in location_counts:
+                query = "UPDATE location_distribution SET value = value + %s WHERE user_id = %s AND location_id = %s" % (location_counts[location_id], user_id, location_id)
+                affected_rows = self.issue_insert(query)
+                if affected_rows == 0:
+                    query = "INSERT INTO location_distribution VALUES (%s, %s, 1)" % (user_id, location_id)
+                    self.issue_insert(query)
+
+
