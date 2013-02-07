@@ -16,6 +16,53 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `event_tweets`
+--
+
+DROP TABLE IF EXISTS `event_tweets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `event_tweets` (
+  `tweet_id` bigint(20) NOT NULL DEFAULT '0',
+  `event_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`tweet_id`,`event_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `events`
+--
+
+DROP TABLE IF EXISTS `events`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `events` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `start_timestamp` datetime DEFAULT NULL,
+  `end_timestamp` datetime DEFAULT NULL,
+  `latitude` float DEFAULT NULL,
+  `longitude` float DEFAULT NULL,
+  `dispersion` float DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=111 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `location_distribution`
+--
+
+DROP TABLE IF EXISTS `location_distribution`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `location_distribution` (
+  `user_id` bigint(20) NOT NULL DEFAULT '0',
+  `location_id` int(11) NOT NULL DEFAULT '0',
+  `value` float DEFAULT NULL,
+  PRIMARY KEY (`user_id`,`location_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `locations`
 --
 
@@ -63,12 +110,9 @@ CREATE TABLE `users` (
   `screen_name` varchar(50) DEFAULT NULL,
   `name` varchar(50) DEFAULT NULL,
   `profile_crawled` int(1) DEFAULT NULL,
-  `tweets_crawled` int(1) DEFAULT NULL,
-  `graph_crawled` int(1) DEFAULT NULL,
   `geocoded` int(1) DEFAULT NULL,
   `location_property` text,
   `location_id` int(11) DEFAULT NULL,
-  `test_user` int(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `screen_name_index` (`screen_name`),
   KEY `location_id_index` (`location_id`)
@@ -84,4 +128,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2013-02-05  0:49:04
+-- Dump completed on 2013-02-07 15:00:21
