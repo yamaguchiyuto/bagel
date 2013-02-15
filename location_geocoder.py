@@ -17,6 +17,11 @@ db = DB(logging)
 
 while True:
     users = db.get_geocoding_target_users(100)
+    if len(users) == 0:
+        logging.info("All users in DB are geocoded.")
+        time.sleep(10*60)
+        continue
+
     for user in users:
         if user['location_property'] == '':
             db.update_user_by_geocoded_info(user['id'], -1)
